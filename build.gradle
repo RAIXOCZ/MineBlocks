@@ -1,0 +1,100 @@
+plugins {
+    id 'java'
+    id "com.github.johnrengelman.shadow" version "8.1.1"
+    id 'net.minecrell.plugin-yml.bukkit' version '0.5.3'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(11)
+    }
+}
+
+group 'cz.raixo'
+version '2.1.2'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url = 'https://jitpack.io' }
+    maven {
+        name "papermc"
+        url "https://papermc.io/repo/repository/maven-public/"
+    }
+    maven {
+        name "essentialsx-releases"
+        url "https://repo.essentialsx.net/releases/"
+    }
+    maven { url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+    maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
+    maven { url = 'https://oss.sonatype.org/content/repositories/central' }
+    maven { url = 'https://oss.sonatype.org/content/repositories/central' }
+    maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
+    maven { url = "https://repo.aikar.co/content/groups/aikar/" }
+    maven { url = "https://repo.minebench.de/" }
+}
+
+dependencies {
+    compileOnly 'org.projectlombok:lombok:1.18.26'
+    annotationProcessor 'org.projectlombok:lombok:1.18.26'
+
+    compileOnly 'org.spigotmc:spigot:1.17.1-R0.1-SNAPSHOT'
+
+    compileOnly 'io.papermc:paperlib:1.0.6'
+    compileOnly 'net.essentialsx:EssentialsX:2.20.1'
+    compileOnly 'com.github.decentsoftware-eu:decentholograms:2.5.3'
+    compileOnly 'me.clip:placeholderapi:2.11.1'
+    compileOnly 'net.luckperms:api:5.4'
+    compileOnly fileTree(dir: './libs', include: '*.jar')
+
+    implementation 'net.kyori:adventure-platform-bukkit:4.2.0'
+    implementation "co.aikar:acf-bukkit:0.5.1-SNAPSHOT"
+    implementation 'de.themoep:minedown-adventure:1.7.1-SNAPSHOT'
+
+    testImplementation 'org.spigotmc:spigot:1.17.1-R0.1-SNAPSHOT'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    testCompileOnly 'org.projectlombok:lombok:1.18.26'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.26'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+compileJava.options.encoding = 'UTF-8'
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+shadowJar {
+    archiveFileName = "MineBlocks-${project.version}.jar"
+    relocate 'co.aikar.commands', 'cz.raixo.blocks.libs.acf'
+    relocate 'co.aikar.locales', 'cz.raixo.blocks.libs.acf.locales'
+    relocate 'de.themoep.minedown', 'cz.raixo.blocks.libs.minedown'
+    relocate 'net.kyori.adventure', 'cz.raixo.blocks.libs.adventure'
+    relocate 'net.kyori.examination', 'cz.raixo.blocks.libs.adventure.examination'
+    relocate 'org.intellij', 'cz.raixo.blocks.libs.annotations.intellij'
+    relocate 'org.jetbrains', 'cz.raixo.blocks.libs.annotations.jetbrains'
+}
+
+bukkit {
+    name = "MineBlocks"
+    description = "Easy to use plugin, that allows you to create \"Mine blocks\" on your server"
+    version = project.version
+    main = "cz.raixo.blocks.MineBlocksPlugin"
+    author = "RAIXOCZ"
+    website = "mb.raixo.cz"
+    apiVersion = "1.16"
+    load = "POSTWORLD"
+    softDepend = [
+        "DecentHolograms",
+        "PlaceholderAPI",
+        "LuckPerms",
+        "CMI",
+        "Essentials",
+        "UltraAFK",
+        "AFKPlus"
+    ]
+}
