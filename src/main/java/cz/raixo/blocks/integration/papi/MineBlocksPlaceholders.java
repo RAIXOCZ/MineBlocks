@@ -2,6 +2,7 @@ package cz.raixo.blocks.integration.papi;
 
 import cz.raixo.blocks.MineBlocksPlugin;
 import cz.raixo.blocks.block.MineBlock;
+import cz.raixo.blocks.block.cooldown.BlockCoolDown;
 import cz.raixo.blocks.block.playerdata.PlayerData;
 import cz.raixo.blocks.util.NumberUtil;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +48,7 @@ public class MineBlocksPlaceholders extends PlaceholderExpansion {
         if (blockOpt.isEmpty()) return "block_not_found";
         MineBlock block = blockOpt.get();
         String value = params.substring(block.getId().length());
-        if (value.length() > 0) value = value.substring(1);
+        if (!value.isEmpty()) value = value.substring(1);
         value = value.toLowerCase();
         if (value.startsWith("top_")) {
             boolean breaks = value.startsWith("top_breaks_");
@@ -67,6 +68,10 @@ public class MineBlocksPlaceholders extends PlaceholderExpansion {
                             .map(PlayerData::getBreaks)
                             .orElse(0)
             );
+            case "timeout":
+                BlockCoolDown coolDown = block.getCoolDown();
+                if (!coolDown.isActive()) return "";
+                return block.getPlugin().getConfiguration().getLangConfig().getTimeoutFormatted(coolDown.getActive().getEnd());
             default: return null;
         }
     }
