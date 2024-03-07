@@ -86,6 +86,7 @@ public class MBCommand extends BaseCommand {
 
     @Default
     @Subcommand("help")
+    @CommandPermission("mb.admin.help")
     public void help(CommandSender sender) {
         String baseCommand = "#2C74B3/mb ";
         Colors.send(sender,
@@ -107,12 +108,14 @@ public class MBCommand extends BaseCommand {
     }
 
     @Subcommand("reload")
+    @CommandPermission("mb.admin.reload")
     public void reload(CommandSender sender) {
         plugin.reload();
         Colors.send(sender, "#2C74B3Plugin was reloaded!");
     }
 
     @Subcommand("list")
+    @CommandPermission("mb.admin.list")
     public void list(CommandSender sender) {
         Collection<MineBlock> blocks = plugin.getBlockRegistry().getBlocks();
         if (blocks.isEmpty()) {
@@ -137,6 +140,7 @@ public class MBCommand extends BaseCommand {
     @Subcommand("teleport|tp")
     @Syntax("/mb teleport <block>")
     @CommandCompletion("@blocks")
+    @CommandPermission("mb.admin.teleport")
     public void teleport(Player player, @Single String name) {
         Optional.ofNullable(plugin.getBlockRegistry().get(name)).ifPresentOrElse(block -> {
             player.teleport(block.getLocation().clone().add(0.5, 1.5, .5), PlayerTeleportEvent.TeleportCause.COMMAND);
@@ -149,6 +153,7 @@ public class MBCommand extends BaseCommand {
     }
 
     @Subcommand("version")
+    @CommandPermission("mb.admin.version")
     public void version(CommandSender sender) {
         BukkitTask task = plugin.getServer().getScheduler().runTaskLater(plugin, () -> Colors.send(sender, "&7Fetching..."), 5);
         String pluginVersion = plugin.getDescription().getVersion();
@@ -171,6 +176,7 @@ public class MBCommand extends BaseCommand {
     }
 
     @Subcommand("update")
+    @CommandPermission("mb.admin.update")
     public void update(CommandSender sender) {
         BukkitTask task = plugin.getServer().getScheduler().runTaskLater(plugin, () -> Colors.send(sender, "&7Updating..."), 5);
         VersionUtil.downloadLatest(plugin)
@@ -186,6 +192,7 @@ public class MBCommand extends BaseCommand {
     @Subcommand("reset")
     @Syntax("/mb reset <block>")
     @CommandCompletion("@blocks")
+    @CommandPermission("mb.admin.reset")
     public void reset(CommandSender sender, @Single String name) {
         Optional.ofNullable(plugin.getBlockRegistry().get(name)).ifPresentOrElse(block -> {
             block.reset();
@@ -199,6 +206,7 @@ public class MBCommand extends BaseCommand {
 
     @Subcommand("sethealth")
     @Syntax("/mb sethealth <block> <health>")
+    @CommandPermission("mb.admin.sethealth")
     @CommandCompletion("@blocks @nothing")
     public void setHealth(CommandSender sender, String name, int health) {
         Optional.ofNullable(plugin.getBlockRegistry().get(name)).ifPresentOrElse(block -> {
@@ -215,6 +223,7 @@ public class MBCommand extends BaseCommand {
 
     @Subcommand("edit")
     @Syntax("/mb edit <block>")
+    @CommandPermission("mb.admin.edit")
     @CommandCompletion("@blocks")
     public void edit(Player player, @Single String name) {
         Optional.ofNullable(plugin.getBlockRegistry().get(name))
@@ -225,6 +234,7 @@ public class MBCommand extends BaseCommand {
     }
 
     @Subcommand("remove")
+    @CommandPermission("mb.admin.remove")
     @Syntax("/mb remove <block>")
     public void remove(CommandSender sender, @Single String name) {
         if (!(sender instanceof ConsoleCommandSender)) {
@@ -249,6 +259,7 @@ public class MBCommand extends BaseCommand {
 
     @Subcommand("create")
     @Syntax("/mb create <block>")
+    @CommandPermission("mb.admin.create")
     public void create(Player sender, @Single String name) {
         Optional.ofNullable(plugin.getBlockRegistry().get(name))
                 .ifPresentOrElse(
@@ -295,6 +306,7 @@ public class MBCommand extends BaseCommand {
 
     @Subcommand("hologram setline")
     @Syntax("/mb hologram setline <block> <line number> <line content>")
+    @CommandPermission("mb.admin.hologram")
     @CommandCompletion("@blocks @nothing")
     public void setLine(CommandSender sender, String name, int l, String value) {
         int line = l - 1;
@@ -317,6 +329,7 @@ public class MBCommand extends BaseCommand {
 
     @Subcommand("hologram removeline")
     @Syntax("/mb hologram removeline <block> <line number>")
+    @CommandPermission("mb.admin.hologram")
     @CommandCompletion("@blocks @nothing")
     public void removeLine(CommandSender sender, String name, int l) {
         int line = l - 1;
@@ -339,6 +352,7 @@ public class MBCommand extends BaseCommand {
 
     @Subcommand("hologram addline")
     @Syntax("/mb hologram addline <block> <line content>")
+    @CommandPermission("mb.admin.hologram")
     @CommandCompletion("@blocks @nothing")
     public void addLine(CommandSender sender, String name, String value) {
         Optional.ofNullable(plugin.getBlockRegistry().get(name))
@@ -358,6 +372,7 @@ public class MBCommand extends BaseCommand {
 
     @Subcommand("hologram show")
     @Syntax("/mb hologram show <block>")
+    @CommandPermission("mb.admin.hologram")
     @CommandCompletion("@blocks")
     public void show(CommandSender sender, @Single String name) {
         Optional.ofNullable(plugin.getBlockRegistry().get(name))
