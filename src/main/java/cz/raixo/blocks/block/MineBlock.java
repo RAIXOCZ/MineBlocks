@@ -46,6 +46,7 @@ public class MineBlock {
     private String permission;
     private RequiredTool requiredTool;
     private BlockTop top = new BlockTop();
+    private int breakLimit = 0;
     private Map<UUID, PlayerData> playerDataMap = new HashMap<>();
 
     public Runnable onBreak(Player player) {
