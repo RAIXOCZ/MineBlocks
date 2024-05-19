@@ -45,7 +45,7 @@ public class BlocksConfig {
                 block.setType(new BlockType(block, ConfigUtil.getMaterial(blockSection.getString("type"))));
                 block.setHealth(new BlockHealth(block, blockSection.getInt("health")));
                 block.setPermission(blockSection.getString("permission"));
-                block.setBreakLimit(blockSection.getInt("break-limit"));
+                block.setBreakLimit(blockSection.getInt("break-limit", -1));
                 block.setLocation(getLocation(block, Objects.requireNonNull(blockSection.getConfigurationSection("location"), "Block " + id + " does not have a location set")));
                 block.setHologram(getHologram(block, Objects.requireNonNull(blockSection.getConfigurationSection("hologram"), "Block " + id + " does not have a hologram set")));
 

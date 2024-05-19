@@ -39,6 +39,10 @@ public class BlocksListener implements Listener {
         return plugin.getConfiguration().getOptionsConfig().getNotificationType();
     }
 
+    private int getGlobalBreakLimit() {
+        return plugin.getConfiguration().getOptionsConfig().getBlockBreakLimit();
+    }
+
     private boolean hasValidTool(MineBlock block, Player player) {
         RequiredTool requiredTool = block.getRequiredTool();
         if (requiredTool == null) return true;
@@ -54,6 +58,9 @@ public class BlocksListener implements Listener {
         e.setCancelled(true);
         
         int breakLimit = block.getBreakLimit();
+        if (breakLimit < 0) {
+            breakLimit = getGlobalBreakLimit();
+        }
         if (breakLimit > 0) {
             long last = lastBreak.getOrDefault(player.getUniqueId(), 0L);
             long curr = System.currentTimeMillis();

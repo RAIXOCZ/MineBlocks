@@ -20,6 +20,7 @@ lang:
 options:
   afk-integration-enabled: false
   notification-type: ACTIONBAR # ACTIONBAR or CHAT
+  block-break-limit: 20 # Global/default block break limit in milliseconds
   hologram-update-interval: -1 # Hologram update interval in ticks, -1 for instant update
   offline-rewards: true
 blocks:

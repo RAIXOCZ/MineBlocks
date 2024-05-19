@@ -20,6 +20,10 @@ public class OptionsConfig {
         return Optional.ofNullable(config.getString("notification-type")).flatMap(NotificationType::getByName).orElse(NotificationType.ACTIONBAR);
     }
 
+    public int getBlockBreakLimit() {
+        return config.getInt("block-break-limit", 0);
+    }
+
     public int getUpdateInterval() {
         return config.getInt("hologram-update-interval", -1);
     }
