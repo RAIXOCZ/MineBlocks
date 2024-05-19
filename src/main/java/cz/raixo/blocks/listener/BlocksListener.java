@@ -30,10 +30,6 @@ public class BlocksListener implements Listener {
         this.plugin = plugin;
     }
 
-    private int getBreakLimit() {
-        return plugin.getConfiguration().getOptionsConfig().getBlockBreakLimit();
-    }
-
     private boolean isAfk(Player player) {
         if (!plugin.getConfiguration().getOptionsConfig().isAfkEnabled()) return false;
         return plugin.getIntegrationManager().getAfkProvider().isAFK(player);
@@ -57,7 +53,7 @@ public class BlocksListener implements Listener {
 
         e.setCancelled(true);
         
-        int breakLimit = getBreakLimit();
+        int breakLimit = block.getBreakLimit();
         if (breakLimit > 0) {
             long last = lastBreak.getOrDefault(player.getUniqueId(), 0L);
             long curr = System.currentTimeMillis();
