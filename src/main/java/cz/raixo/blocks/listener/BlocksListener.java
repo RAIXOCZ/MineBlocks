@@ -46,7 +46,7 @@ public class BlocksListener implements Listener {
     private boolean hasValidTool(MineBlock block, Player player) {
         RequiredTool requiredTool = block.getRequiredTool();
         if (requiredTool == null) return true;
-        return requiredTool.test(player.getInventory().getItemInMainHand());
+        return requiredTool.test(player);
     }
 
     @EventHandler

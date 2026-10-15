@@ -28,7 +28,7 @@ public class ToolItem extends BlockMenuItem {
     @Override
     public ItemStack render(MineBlock state) {
         int totalRules = Optional.ofNullable(getState().getRequiredTool())
-                .map(requiredTool -> requiredTool.getEnchantmentFilters().size() + requiredTool.getNameFilters().size() + requiredTool.getMaterialFilters().size())
+                .map(requiredTool -> requiredTool.getEnchantmentFilters().size() + requiredTool.getNameFilters().size() + requiredTool.getMaterialFilters().size() + requiredTool.getPotionFilters().size())
                 .orElse(0);
         return ItemStackBuilder.create(Material.IRON_PICKAXE)
                 .withName(MineDown.parse("&#205295&&lTool requirements"))

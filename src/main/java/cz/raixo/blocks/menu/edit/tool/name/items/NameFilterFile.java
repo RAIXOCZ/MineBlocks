@@ -28,7 +28,7 @@ public class NameFilterFile extends BlockMenuItem {
 
     @Override
     public void click(ItemClickEvent<MineBlock> event) {
-        int index = event.getSlot() + (menu.getPage() * menu.getPage());
+        int index = event.getSlot() + (menu.getPage() * menu.getPageSize());
         if (index < 0) return;
         List<NameFilter> nameFilters = Optional.of(getState().getRequiredTool()).map(RequiredTool::getNameFilters).orElseGet(ArrayList::new);
         if (index < nameFilters.size()) {
@@ -55,7 +55,7 @@ public class NameFilterFile extends BlockMenuItem {
 
         if (nameFilters.isEmpty()) return null;
 
-        int pageStart = menu.getPage() * menu.getPage();
+        int pageStart = menu.getPage() * menu.getPageSize();
         if (pageStart >= nameFilters.size()) {
             menu.setPage(menu.getMaxPage());
             return render(slot, state);

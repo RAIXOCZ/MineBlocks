@@ -78,6 +78,13 @@ blocks:
       names:
         "default": DENIED
         "Test name": ALLOWED
+      potions: # active potion effects of the player
+        default: ALLOWED
+        haste:
+          level: 2-3
+          type: ALLOWED
+        strength:
+          type: DENIED
     rewards:
       reward_name:
         type: top

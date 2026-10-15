@@ -13,6 +13,7 @@ import cz.raixo.blocks.block.rewards.Reward;
 import cz.raixo.blocks.block.tool.RequiredTool;
 import cz.raixo.blocks.block.tool.Result;
 import cz.raixo.blocks.block.tool.enchantment.ToolEnchantment;
+import cz.raixo.blocks.block.tool.potion.ToolPotion;
 import cz.raixo.blocks.block.tool.material.MaterialFilter;
 import cz.raixo.blocks.block.tool.name.NameFilter;
 import cz.raixo.blocks.block.type.BlockType;
@@ -22,6 +23,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
 
@@ -67,14 +69,7 @@ public class BlocksConfig {
                 ConfigurationSection toolSection = blockSection.getConfigurationSection("tool");
                 if (toolSection != null) {
                     block.setRequiredTool(getRequiredTool(toolSection));
-                } else block.setRequiredTool(new RequiredTool(
-                        new LinkedList<>(),
-                        Result.ALLOWED,
-                        new HashMap<>(),
-                        Result.ALLOWED,
-                        new LinkedList<>(),
-                        Result.ALLOWED
-                ));
+                } else block.setRequiredTool(RequiredTool.empty());
 
                 ConfigurationSection rewardsSection = blockSection.getConfigurationSection("rewards");
                 if (rewardsSection != null) {
@@ -218,13 +213,36 @@ public class BlocksConfig {
             defName = Result.ALLOWED;
         }
 
+        ConfigurationSection potions = section.getConfigurationSection("potions");
+
+        Map<PotionEffectType, ToolPotion> potionFilters;
+        Result defPotion;
+        potionFilters = new HashMap<>();
+        if (potions != null) {
+            defPotion = parseDefaultResult(potions.getString("default"));
+            for (String key : potions.getKeys(false)) {
+                if (key.equalsIgnoreCase("default")) continue;
+                PotionEffectType effectType = PotionEffectType.getByKey(NamespacedKey.minecraft(key));
+                ConfigurationSection potionSection = potions.getConfigurationSection(key);
+                if (effectType == null || potionSection == null) continue;
+                ToolPotion.parse(potionSection).ifPresent(toolPotion -> potionFilters.put(
+                        effectType,
+                        toolPotion
+                ));
+            }
+        } else {
+            defPotion = Result.ALLOWED;
+        }
+
         return new RequiredTool(
                 materialFilters,
                 defMaterial,
                 enchantmentFilters,
                 defEnchantment,
                 nameFilters,
-                defName
+                defName,
+                potionFilters,
+                defPotion
         );
     }
 
@@ -298,8 +316,6 @@ public class BlocksConfig {
 
     private void setRequiredTool(ConfigurationSection section, RequiredTool tool) {
         if (tool == null) return;
-        Optional.ofNullable(tool.getEnchantmentDefault()).ifPresent(r -> section.set("enchantments.default", r.name()));
-        Optional.ofNullable(tool.getNameDefault()).ifPresent(r -> section.set("names.default", r.name()));
 
         List<MaterialFilter> materialFilters = tool.getMaterialFilters();
         List<String> materialValues = new LinkedList<>();
@@ -329,6 +345,19 @@ public class BlocksConfig {
                 names.set(nameFilter.getName(), nameFilter.getResult().name());
             }
         }
+        Map<PotionEffectType, ToolPotion> toolPotions = tool.getPotionFilters();
+        if (!toolPotions.isEmpty()) {
+            ConfigurationSection potions = section.createSection("potions");
+            for (Map.Entry<PotionEffectType, ToolPotion> entry : toolPotions.entrySet()) {
+                ConfigurationSection potionSection = potions.createSection(entry.getKey().getKey().getKey());
+                potionSection.set("type", entry.getValue().getResult().name());
+                potionSection.set("level", Optional.ofNullable(entry.getValue().getRange()).map(Object::toString).orElse(null));
+            }
+        }
+        // Defaults are set after createSection, which would otherwise replace them
+        Optional.ofNullable(tool.getEnchantmentDefault()).ifPresent(r -> section.set("enchantments.default", r.name()));
+        Optional.ofNullable(tool.getNameDefault()).ifPresent(r -> section.set("names.default", r.name()));
+        Optional.ofNullable(tool.getPotionDefault()).ifPresent(r -> section.set("potions.default", r.name()));
     }
 
     public void setBlocks(List<MineBlock> blocks) {
