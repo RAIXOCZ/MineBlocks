@@ -35,7 +35,7 @@ public class ToolEnchantment {
         ));
     }
 
-    private final NumberRange range;
+    private NumberRange range;
     private Result result;
 
     private Result result(int level) {

@@ -72,9 +72,13 @@ public abstract class PageableBlockMenu<T extends GuiFiller<T>> extends BlockMen
         return (int) (Math.ceil(index / ((double) getPageSize())) - 1);
     }
 
-    public int getMaxPage() {
+    public int getItemCount() {
         BlockRewards rewards = getBlock().getRewards();
-        double size = rewards.getRewards().size() + rewards.getLastRewards().size();
+        return rewards.getRewards().size() + rewards.getLastRewards().size();
+    }
+
+    public int getMaxPage() {
+        double size = getItemCount();
         return Math.max(((int) Math.ceil(size / getPageSize())) - 1, 0);
     }
 

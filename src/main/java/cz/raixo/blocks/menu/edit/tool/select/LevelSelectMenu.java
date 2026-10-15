@@ -1,4 +1,4 @@
-package cz.raixo.blocks.menu.edit.tool.enchantments.select;
+package cz.raixo.blocks.menu.edit.tool.select;
 
 import cz.raixo.blocks.gui.Gui;
 import cz.raixo.blocks.gui.filler.map.MapGuiFiller;
@@ -14,7 +14,6 @@ import cz.raixo.blocks.util.range.StaticNumber;
 import de.themoep.minedown.adventure.MineDown;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -24,20 +23,30 @@ import java.util.stream.IntStream;
 
 public class LevelSelectMenu extends Gui<MapGuiFiller> {
 
-    public LevelSelectMenu(Gui<?> parent, Enchantment enchantment, Consumer<NumberRange> callback) {
+    public static final int MAX_LEVELS = 18;
+
+    /**
+     * @param maxLevel highest selectable level, capped at {@link #MAX_LEVELS}
+     * @param selected range whose levels start selected, or null to select all
+     */
+    public LevelSelectMenu(Gui<?> parent, int maxLevel, NumberRange selected, Consumer<NumberRange> callback) {
         super(new MapGuiFiller(
                 "aaaaaaaaa",
                 "aaaaaaaaa",
                 "l   o   x"
-        ), Component.text("Enchantment selection"), InventoryType.CHEST_3);
+        ), Component.text("Level selection"), InventoryType.CHEST_3);
 
         MapGuiFiller filler = getFiller();
+        int max = Math.min(maxLevel, MAX_LEVELS);
 
-        List<Integer> levels = IntStream.range(1, enchantment.getMaxLevel() + 1).mapToObj(i -> i).collect(Collectors.toCollection(LinkedList::new));
-        
-        filler.setItem('a', new GuiItemBuilder<>(filler, (Renderer<Enchantment>) (slot, ench) -> {
+        List<Integer> levels = IntStream.range(1, max + 1)
+                .filter(level -> selected == null || selected.test(level))
+                .boxed()
+                .collect(Collectors.toCollection(LinkedList::new));
+
+        filler.setItem('a', new GuiItemBuilder<>(filler, (Renderer<Integer>) (slot, maxLvl) -> {
             int level = slot + 1;
-            if (level <= ench.getMaxLevel()) {
+            if (level <= maxLvl) {
                 boolean present = levels.contains(level);
                 return ItemStackBuilder.create(present ? Material.GREEN_TERRACOTTA : Material.RED_TERRACOTTA)
                         .withName(MineDown.parse((present ? "&#539165&" : "&#DF2E38&") + level))
@@ -49,11 +58,11 @@ public class LevelSelectMenu extends Gui<MapGuiFiller> {
             }
             return null;
         })
-                .withDefaultState(enchantment)
+                .withDefaultState(max)
                 .withClickHandler(itemClickEvent -> {
-                    Enchantment ench = itemClickEvent.getGuiItem().getState();
+                    int maxLvl = itemClickEvent.getGuiItem().getState();
                     int level = itemClickEvent.getSlot() + 1;
-                    if (level <= ench.getMaxLevel()) {
+                    if (level <= maxLvl) {
                         if (levels.contains(level)) {
                             levels.removeIf(i -> i == level);
                         } else levels.add(level);
@@ -68,11 +77,11 @@ public class LevelSelectMenu extends Gui<MapGuiFiller> {
                         .build()
                 )
                 .withClickHandler(itemClickEvent -> callback.accept(
-                        new MultiNumberRange(levels.stream().map(StaticNumber::new).collect(Collectors.toList()))
+                        new MultiNumberRange(levels.stream().sorted().map(StaticNumber::new).collect(Collectors.toList()))
                 ))
                 .build()
         );
-        
+
         filler.setItem('l', new LearnMoreItem(filler));
         filler.setItem('x', new BackItem(filler, () -> parent));
     }

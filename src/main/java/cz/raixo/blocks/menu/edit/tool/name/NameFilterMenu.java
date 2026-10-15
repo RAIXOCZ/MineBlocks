@@ -14,6 +14,8 @@ import cz.raixo.blocks.menu.general.PreviousPageItem;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 
+import java.util.Optional;
+
 @Getter
 public class NameFilterMenu extends PageableBlockMenu<MapGuiFiller> {
 
@@ -39,6 +41,11 @@ public class NameFilterMenu extends PageableBlockMenu<MapGuiFiller> {
     @Override
     public int getPageSize() {
         return 18;
+    }
+
+    @Override
+    public int getItemCount() {
+        return Optional.ofNullable(getBlock().getRequiredTool()).map(t -> t.getNameFilters().size()).orElse(0);
     }
 
 }

@@ -6,6 +6,7 @@ import cz.raixo.blocks.gui.item.click.ItemClickEvent;
 import cz.raixo.blocks.gui.itemstack.ItemStackBuilder;
 import cz.raixo.blocks.menu.BlockMenuItem;
 import cz.raixo.blocks.menu.edit.tool.enchantments.EnchantmentFilterMenu;
+import cz.raixo.blocks.menu.edit.tool.select.LevelSelectMenu;
 import cz.raixo.blocks.util.range.NumberRange;
 import de.themoep.minedown.adventure.MineDown;
 import net.kyori.adventure.text.Component;
@@ -35,7 +36,7 @@ public class EnchantmentFilterItem extends BlockMenuItem {
 
     @Override
     public void click(ItemClickEvent<MineBlock> event) {
-        int index = event.getSlot() + (menu.getPage() * menu.getPage());
+        int index = event.getSlot() + (menu.getPage() * menu.getPageSize());
         if (index < 0) return;
         List<Map.Entry<Enchantment, ToolEnchantment>> enchantments = menu.getEnchantments();
         if (index < enchantments.size()) {
@@ -44,6 +45,15 @@ public class EnchantmentFilterItem extends BlockMenuItem {
             } else if (event.getType() == ClickType.RIGHT) {
                 ToolEnchantment enchantment = enchantments.get(index).getValue();
                 enchantment.setResult(enchantment.getResult().getOther());
+            } else if (event.getType().isShiftClick()) {
+                Map.Entry<Enchantment, ToolEnchantment> entry = enchantments.get(index);
+                if (entry.getKey().getMaxLevel() <= 1) return;
+                new LevelSelectMenu(menu, entry.getKey().getMaxLevel(), entry.getValue().getRange(), range -> {
+                    entry.getValue().setRange(range);
+                    menu.saveAndUpdate();
+                    menu.open(event.getPlayer());
+                }).open(event.getPlayer());
+                return;
             }
             menu.saveAndUpdate();
         }
@@ -67,7 +77,7 @@ public class EnchantmentFilterItem extends BlockMenuItem {
 
         if (enchantments.isEmpty()) return null;
 
-        int pageStart = menu.getPage() * menu.getPage();
+        int pageStart = menu.getPage() * menu.getPageSize();
         if (pageStart >= enchantments.size()) {
             menu.setPage(menu.getMaxPage());
             return render(slot, state);
@@ -107,6 +117,7 @@ public class EnchantmentFilterItem extends BlockMenuItem {
             lore.add(Component.empty());
             lore.add(MineDown.parse("&7Left click to &#DF2E38&delete"));
             lore.add(MineDown.parse("&7Right click to change value"));
+            if (enchantment.getMaxLevel() > 1) lore.add(MineDown.parse("&7Shift click to edit levels"));
 
             return ItemStackBuilder.create(toolEnchantment.getResult().getBooleanValue() ? Material.GREEN_TERRACOTTA : Material.RED_TERRACOTTA)
                     .withName(MineDown.parse("&#205295&&lEnchantment filter"))

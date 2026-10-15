@@ -9,7 +9,7 @@ import cz.raixo.blocks.menu.BlockMenuItem;
 import cz.raixo.blocks.menu.edit.tool.ToolEditMenu;
 import cz.raixo.blocks.menu.edit.tool.enchantments.EnchantmentFilterMenu;
 import cz.raixo.blocks.menu.edit.tool.enchantments.select.EnchantmentSelectMenu;
-import cz.raixo.blocks.menu.edit.tool.enchantments.select.LevelSelectMenu;
+import cz.raixo.blocks.menu.edit.tool.select.LevelSelectMenu;
 import cz.raixo.blocks.util.range.NumberRange;
 import de.themoep.minedown.adventure.MineDown;
 import org.bukkit.enchantments.Enchantment;
@@ -41,7 +41,7 @@ public class AddEnchantmentFilter extends BlockMenuItem {
     private void selectLevels(Player player, Enchantment enchantment, Consumer<NumberRange> consumer) {
         if (enchantment.getMaxLevel() <= 1) {
             consumer.accept(null);
-        } else new LevelSelectMenu(getMenu(), enchantment, consumer).open(player);
+        } else new LevelSelectMenu(getMenu(), enchantment.getMaxLevel(), null, consumer).open(player);
     }
 
     @Override

@@ -72,4 +72,9 @@ public class MaterialFilterMenu extends PageableBlockMenu<MapGuiFiller> {
     public int getPageSize() {
         return 18;
     }
+
+    @Override
+    public int getItemCount() {
+        return Optional.ofNullable(getBlock().getRequiredTool()).map(t -> t.getMaterialFilters().size()).orElse(0);
+    }
 }

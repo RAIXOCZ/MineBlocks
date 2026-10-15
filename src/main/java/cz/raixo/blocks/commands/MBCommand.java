@@ -11,7 +11,6 @@ import cz.raixo.blocks.block.messages.BlockMessages;
 import cz.raixo.blocks.block.reset.ResetOptions;
 import cz.raixo.blocks.block.rewards.BlockRewards;
 import cz.raixo.blocks.block.tool.RequiredTool;
-import cz.raixo.blocks.block.tool.Result;
 import cz.raixo.blocks.block.type.BlockType;
 import cz.raixo.blocks.config.blocks.BlocksConfig;
 import cz.raixo.blocks.menu.edit.EditMenu;
@@ -285,14 +284,7 @@ public class MBCommand extends BaseCommand {
                             block.setResetOptions(new ResetOptions(block, false, -1, ""));
                             block.setMessages(new BlockMessages("&7Block was destroyed\n&7Your breaks: %breaks%"));
                             block.setRewards(new BlockRewards(block, new LinkedList<>(), new LinkedList<>()));
-                            block.setRequiredTool(new RequiredTool(
-                                    new LinkedList<>(),
-                                    Result.ALLOWED,
-                                    new HashMap<>(),
-                                    Result.ALLOWED,
-                                    new LinkedList<>(),
-                                    Result.ALLOWED
-                            ));
+                            block.setRequiredTool(RequiredTool.empty());
                             plugin.getBlockRegistry().register(block);
                             BlocksConfig blocksConfig = plugin.getConfiguration().getBlocksConfig();
                             blocksConfig.setBlock(block);

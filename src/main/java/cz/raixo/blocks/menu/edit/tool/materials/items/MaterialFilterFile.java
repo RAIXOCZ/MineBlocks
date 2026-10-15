@@ -31,7 +31,7 @@ public class MaterialFilterFile extends BlockMenuItem {
 
     @Override
     public void click(ItemClickEvent<MineBlock> event) {
-        int index = event.getSlot() + (menu.getPage() * menu.getPage());
+        int index = event.getSlot() + (menu.getPage() * menu.getPageSize());
         if (index < 0) return;
         List<cz.raixo.blocks.block.tool.material.MaterialFilter> materialFilters = Optional.of(getState().getRequiredTool()).map(RequiredTool::getMaterialFilters).orElseGet(ArrayList::new);
         if (index < materialFilters.size()) {
@@ -58,7 +58,7 @@ public class MaterialFilterFile extends BlockMenuItem {
 
         if (materialFilters.isEmpty()) return null;
 
-        int pageStart = menu.getPage() * menu.getPage();
+        int pageStart = menu.getPage() * menu.getPageSize();
         if (pageStart >= materialFilters.size()) {
             menu.setPage(menu.getMaxPage());
             return render(slot, state);
